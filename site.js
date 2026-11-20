@@ -64,7 +64,7 @@ async function searchAnime(query) {
   return parseCards(await getHtml(url)).slice(0, 50);
 }
 async function getAnime(url) {
-  const html = await getHtml(url), $ = cheerio.load(html);console.log("DEBUG EPISODE HTML:", html.slice(0, 5000));
+  const html = await getHtml(url), $ = cheerio.load(html);
   const title = $("h1").first().text().trim() || $("title").text().trim();
   const posterEl = $("article img, .entry-content img, img").filter((_,e)=>!!($(e).attr("src")||$(e).attr("data-src"))).first();
   const poster = abs(posterEl.attr("data-src") || posterEl.attr("data-lazy-src") || posterEl.attr("src") || "");
@@ -83,7 +83,15 @@ async function getEpisodePage(url) {
   return $("h1").first().text().trim() || $("title").text().trim();
 }
 async function getEpisodeStream(url) {
+  const html = await getHtml(url);async function getEpisodeStream(url) {
   const html = await getHtml(url);
+
+  console.log("DEBUG STREAM PAGE:", {
+    length: html.length,
+    hasEmbedUrl: html.includes("embedUrl"),
+    hasEmbedHost: html.includes("indy.team-indy.net"),
+    snippets: html.match(/.{0,100}(?:embedUrl|indy\.team-indy\.net).{0,180}/gi)?.slice(0, 10)
+  });
 
   let embedUrl = "";
 
