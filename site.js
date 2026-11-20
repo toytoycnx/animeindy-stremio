@@ -83,7 +83,6 @@ async function getEpisodePage(url) {
   return $("h1").first().text().trim() || $("title").text().trim();
 }
 async function getEpisodeStream(url) {
-  const html = await getHtml(url);async function getEpisodeStream(url) {
   const html = await getHtml(url);
 
   console.log("DEBUG STREAM PAGE:", {
@@ -95,31 +94,31 @@ async function getEpisodeStream(url) {
 
   let embedUrl = "";
 
-const embed = html.match(/"embedUrl"\s*:\s*"([^"]+)"/);
+  const embed = html.match(/"embedUrl"\s*:\s*"([^"]+)"/);
 
-if (embed) {
-  embedUrl = embed[1].replace(/\\\//g, "/");
-}
+  if (embed) {
+    embedUrl = embed[1].replace(/\\\//g, "/");
+  }
 
-if (!embedUrl) {
-  const $ = cheerio.load(html);
+  if (!embedUrl) {
+    const $ = cheerio.load(html);
 
-  embedUrl = $("a[href]").map((_, a) => $(a).attr("href"))
-    .get()
-    .find(href => {
-      try {
-        const u = new URL(href);
-        return u.hostname === "indy.team-indy.net" &&
-               u.pathname.startsWith("/embed/");
-      } catch {
-        return false;
-      }
-    }) || "";
-}
+    embedUrl = $("a[href]").map((_, a) => $(a).attr("href"))
+      .get()
+      .find(href => {
+        try {
+          const u = new URL(href);
+          return u.hostname === "indy.team-indy.net" &&
+                 u.pathname.startsWith("/embed/");
+        } catch {
+          return false;
+        }
+      }) || "";
+  }
 
-if (!embedUrl) throw new Error("Embed not found");
+  if (!embedUrl) throw new Error("Embed not found");
 
-const u = new URL(embedUrl);
+  const u = new URL(embedUrl);
 
   if (u.hostname !== "indy.team-indy.net")
     throw new Error("Invalid embed");
