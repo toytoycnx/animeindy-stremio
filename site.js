@@ -85,11 +85,33 @@ async function getEpisodePage(url) {
 async function getEpisodeStream(url) {
   const html = await getHtml(url);
 
-  const embed = html.match(/"embedUrl"\s*:\s*"([^"]+)"/);
-  if (!embed) throw new Error("Embed not found");
+  let embedUrl = "";
 
-  const embedUrl = embed[1].replace(/\\\//g, "/");
-  const u = new URL(embedUrl);
+const embed = html.match(/"embedUrl"\s*:\s*"([^"]+)"/);
+
+if (embed) {
+  embedUrl = embed[1].replace(/\\\//g, "/");
+}
+
+if (!embedUrl) {
+  const $ = cheerio.load(html);
+
+  embedUrl = $("a[href]").map((_, a) => $(a).attr("href"))
+    .get()
+    .find(href => {
+      try {
+        const u = new URL(href);
+        return u.hostname === "indy.team-indy.net" &&
+               u.pathname.startsWith("/embed/");
+      } catch {
+        return false;
+      }
+    }) || "";
+}
+
+if (!embedUrl) throw new Error("Embed not found");
+
+const u = new URL(embedUrl);
 
   if (u.hostname !== "indy.team-indy.net")
     throw new Error("Invalid embed");
