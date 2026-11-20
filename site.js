@@ -114,4 +114,7 @@ async function getEpisodeStream(url) {
 
   return stream.href;
 }
-module.exports = { getHome, getAnime, getEpisodePage, searchAnime };
+module.exports = {
+  getHome, getAnime, getEpisodePage,
+  searchAnime, getEpisodeStream
+};
