@@ -71,14 +71,22 @@ builder.defineMetaHandler(async ({ type, id }) => {
 builder.defineStreamHandler(async ({ id }) => {
   try {
     const episodeUrl = decodeId(id);
-    if (!episodeUrl.startsWith(BASE + "/")) return { streams: [] };
+
+    if (!episodeUrl.startsWith(BASE + "/"))
+      return { streams: [] };
+
     const title = await getEpisodePage(episodeUrl);
-    return { streams: [{
-      name: "ANIMEiNDY",
-      description: `${title || "เปิดตอนนี้"} • เล่นบนเว็บไซต์ต้นทาง`,
-      externalUrl: episodeUrl
-    }] };
-  } catch (e) {
+    const streamUrl = await getEpisodeStream(episodeUrl);
+
+    return {
+      streams: [{
+        name: "ANIMEiNDY",
+        title: title || "เปิดตอนนี้",
+        description: "Direct HLS • 1080p",
+        url: streamUrl
+      }]
+    };
+  } catch (e) {catch (e) {
     console.error("stream:", e.message);
     return { streams: [] };
   }
