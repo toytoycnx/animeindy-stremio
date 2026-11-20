@@ -86,7 +86,7 @@ builder.defineStreamHandler(async ({ id }) => {
         url: streamUrl
       }]
     };
-  } catch (e) {catch (e) {
+  } catch (e) {
     console.error("stream:", e.message);
     return { streams: [] };
   }
