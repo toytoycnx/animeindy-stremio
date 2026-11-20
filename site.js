@@ -82,4 +82,36 @@ async function getEpisodePage(url) {
   const $ = cheerio.load(await getHtml(url));
   return $("h1").first().text().trim() || $("title").text().trim();
 }
+async function getEpisodeStream(url) {
+  const html = await getHtml(url);
+
+  const embed = html.match(/"embedUrl"\s*:\s*"([^"]+)"/);
+  if (!embed) throw new Error("Embed not found");
+
+  const embedUrl = embed[1].replace(/\\\//g, "/");
+  const u = new URL(embedUrl);
+
+  if (u.hostname !== "indy.team-indy.net")
+    throw new Error("Invalid embed");
+
+  const r = await fetch(u, {
+    headers,
+    signal: AbortSignal.timeout(15000)
+  });
+
+  if (!r.ok) throw new Error("Embed unavailable");
+
+  const source = await r.text();
+  const match = source.match(/var\s+playerlink\s*=\s*"([^"]+)"/);
+
+  if (!match) throw new Error("Stream not found");
+
+  const stream = new URL(match[1]);
+
+  if (stream.hostname !== "hls.animeindy.com" ||
+      !stream.pathname.endsWith(".m3u8"))
+    throw new Error("Invalid stream");
+
+  return stream.href;
+}
 module.exports = { getHome, getAnime, getEpisodePage, searchAnime };
