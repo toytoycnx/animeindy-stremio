@@ -1,5 +1,5 @@
 const { addonBuilder, serveHTTP } = require("stremio-addon-sdk");
-const { getHome, getAnime, getEpisodePage, searchAnime } = require("./site");
+const { getHome, getAnime, getEpisodePage, searchAnime, getEpisodeStream } = require("./site");
 const { decodeId, encodeId, cleanText } = require("./util");
 
 const PORT = process.env.PORT || 7000;
