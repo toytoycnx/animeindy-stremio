@@ -1,6 +1,6 @@
 const { addonBuilder, serveHTTP } = require("stremio-addon-sdk");
-const { getHome, getAnime, getEpisodePage, searchAnime } = require("./src/site");
-const { decodeId, encodeId, cleanText } = require("./src/util");
+const { getHome, getAnime, getEpisodePage, searchAnime } = require("./site");
+const { decodeId, encodeId, cleanText } = require("./util");
 
 const PORT = process.env.PORT || 7000;
 const BASE = "https://indy-anime.net";
